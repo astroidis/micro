@@ -6,15 +6,22 @@
 #define OP2 12
 #define OP3 13
 
-// void serialRead(int fd, int *res){
-    // int byte;
-    // for (int i = 0; i < 2; i++){
-        // if (serialDataAvail(fd) > 0){
-            // byte = serialGetchar(fd);
-            // *res += byte << (8 * i);
-        // }
-    // }
-// }
+/* read two bytes from serial port
+ * and build an integer value
+ * resulting range [0..1023]
+ */
+int serialRead2(int fd){
+    int byte, res = 0;
+    for (int i = 0; i < 2; i++){
+        if (serialDataAvail(fd) > 0){
+            byte = serialGetchar(fd);
+            // on atm side value is shifted right by 2
+            // so here i shift it back
+            res |= byte << (2 * i);
+        }
+    }
+    return res;
+}
 
 static int fd;
 int main(){
@@ -28,24 +35,23 @@ int main(){
     int adc;
     while (1){
         if (serialDataAvail(fd) > 0){
-            // serialRead(fd, &adc);
-            adc = serialGetchar(fd);
+            adc = serialRead2(fd);
+            // adc = serialGetchar(fd);
             // printf("%d\n", adc);
-            // getchar();
-            
-            if (adc <= 85){
+
+            if (adc <= 341){
                 digitalWrite(OP1, HIGH);
                 digitalWrite(OP2, LOW);
                 digitalWrite(OP3, LOW);
             }
 
-            if ( (adc >= 86) && (adc <= 171) ){
+            if ( (adc >= 342) && (adc <= 682) ){
                 digitalWrite(OP1, LOW);
                 digitalWrite(OP2, HIGH);
                 digitalWrite(OP3, LOW);
             }
 
-            if (adc >= 172){
+            if (adc >= 683){
                 digitalWrite(OP1, LOW);
                 digitalWrite(OP2, LOW);
                 digitalWrite(OP3, HIGH);

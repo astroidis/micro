@@ -4,6 +4,7 @@ void setup() {
 
 void loop() {
   int adc = analogRead(A0);
+  adc >>= 2;
   Serial.write(adc);
   Serial.flush();
 }
