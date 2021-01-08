@@ -14,8 +14,9 @@ int main(){
     while (1){
         time(&new);
         curtime = localtime(&new);
-        // add check for hour range (10-18)
-        if (curtime->tm_wday > 0 && curtime->tm_wday < 6){
+        if (curtime->tm_wday > 0 && curtime->tm_wday < 6
+            && curtime->tm_hour > 10 && curtime->tm_hour < 18)
+        {
             if (difftime(new, old) >= 30){
                 serialPutchar(fd, 1);
                 old = new;
