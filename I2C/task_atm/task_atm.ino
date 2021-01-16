@@ -5,8 +5,7 @@ DHT dht(2, DHT11);
 
 void setup() {
   Wire.begin(0x23);
-  //Wire.onReceive(recCode);
-  Wire.onRequest(recCode);
+  Wire.onRequest(reqEvent);
   dht.begin();
 }
 
@@ -15,37 +14,23 @@ union {
   char c[4];
 } h, t;
 
+char buf[8];
+
 void loop() {
   h.f = dht.readHumidity();
   t.f = dht.readTemperature();
 
-//  delay(100);
+  for (int i = 0; i < 4; i++){
+    buf[i] = h.c[i];
+  }
+
+  for (int i = 0; i < 4; i++){
+    buf[4 + i] = t.c[i];
+  }
+
+  delay(100);
 }
 
-void readData(){
-  h.f = dht.readHumidity();
-  t.f = dht.readTemperature();
-}
-
-void sendData(){
-  Wire.write(h.c[0]);
-  Wire.write(h.c[1]);
-  Wire.write(h.c[2]);
-  Wire.write(h.c[3]);
-  
-//  Wire.write(t.c, 4);
-}
-
-//void recCode(int code){
-//  while(Wire.available() > 0){
-//    int c = Wire.read();
-//    if (c == 0)
-//      readData();
-//    else if (c == 1)
-//      sendData();
-//  }
-//}
-
-void recCode(){
-  sendData();
+void reqEvent(){
+  Wire.write(buf, 8);
 }

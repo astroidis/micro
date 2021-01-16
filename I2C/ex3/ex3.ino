@@ -1,5 +1,3 @@
-#include <Adafruit_Sensor.h>
-
 #include <DHT.h>
 
 DHT dht(2, DHT11);
