@@ -33,11 +33,11 @@ pp1:
 	ret
 	
 pp2:
-	; A = N * 7 (N = 5)
-	.EQU	N = 5
+	; A = N * 7 (N = 11)
+	.EQU	N = 11
 	ldi		r16,	N	; load N
 	ldi		r17,	7
-	mul		r16,	r17	; 5 * 7
+	mul		r16,	r17
 	
 	ldi		xh,		0x01
 	ldi		xl,		0x60
@@ -47,8 +47,10 @@ pp2:
 	ldi		r16,	N
 	ldi		r17,	3
 	mul		r16,	r17
-	; modulo ...
-	st		x+,		r0
+	mov		r17,	r0
+	ldi		r16,	21
+	call	div
+	st		x+,		r17
 
 	; C = 35
 	ldi		r16,	35
@@ -58,6 +60,15 @@ pp2:
 	ldi		r16,	71 % N
 	st		x,		r16
 
+	ret
+
+div:
+	clr		r18
+	sub		r17,	r16
+	inc		r18
+	brcc	PC-2
+	dec		r18				; quotient
+	add		r17,	r16		; remainder in r17
 	ret
 
 pp3:
